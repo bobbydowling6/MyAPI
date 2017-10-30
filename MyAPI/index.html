@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html ng-app="carApp">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="Content/bootstrap.css" rel="stylesheet" />
+</head>
+<body ng-controller="carController">
+    <div ng-init="initialized()">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-4" ng-repeat="c in cars track by $index">
+                    <div class="panel panel-primary" ng-class="{panel-'danger'': '{{c.Make}}' === 'ford'}">
+                        <div class="panel-heading">{{c.Model}}
+                        <button class="btn-btn-danger" ng-click="delete($index)"><span class="glyphicon glyphcon-remove"></span></button>
+                        </div>
+                        <div class="panel-body">
+                            <p>{{c.Make}}</p>
+                            <p>{{c.Color}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <form ng-submit="add(newCar)">
+                        <div class="form-group">
+                            <label for="make">Make</label>
+                            <input type="text" name="make" ng-model="newCar.make" placeholder="make" />
+                        </div>
+                        <div class="form-group">
+                            <label for="model">Model</label>
+                            <input type="text" name="model" ng-model="newCar.model" placeholder="model" />
+                        </div>
+                        <div class="form-group">
+                            <label for="color">Color</label>
+                            <input type="text" name="color" ng-model="newCar.color" placeholder="color" />
+
+                        </div>
+                        <input type="submit" value="Add Car" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="Scripts/jquery-1.10.2.js"></script>
+    <script src="Scripts/bootstrap.js"></script>
+    <script src="Scripts/angular.js"></script>
+    <script>
+        angular.module("carApp", []);
+
+        angular.module("carApp").controller("carController", function($scope, $http) {
+            $scope.initialized = function () {
+                $http.get("/api/Values").then($scope.initializeCallback);
+            }
+
+            $scope.initializeCallback = function (result) {
+                $scope.cars = result.data;
+            }
+
+            $scope.delete = function (id) {
+                $http.delete("/api/Values/" + id).then($scope.initialize);
+            }
+
+            $scope.add = function (newCar) {
+                $http.post("/api/Values/", newCar).then($scope.initialize);
+            }
+        })
+    </script>
+</body>
+</html>
